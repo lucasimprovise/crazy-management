@@ -72,17 +72,16 @@ class TeamManagerBot(commands.Bot):
         if failed:
             logger.warning(f"{len(failed)} cog(s) failed to load: {failed}")
 
-        # Sync slash commands
+        # Always sync globally first
+        synced = await self.tree.sync()
+        logger.info(f"Slash commands synced globally ({len(synced)} commands)")
+
+        # If GUILD_ID is set, also sync instantly to that guild (dev mode)
         if config.guild_id:
-            # Dev mode: instant sync to a specific guild
             guild = discord.Object(id=config.guild_id)
             self.tree.copy_global_to(guild=guild)
-            await self.tree.sync(guild=guild)
-            logger.info(f"Slash commands synced to dev guild {config.guild_id}")
-        else:
-            # Production: global sync (takes up to 1 hour to propagate)
-            await self.tree.sync()
-            logger.info("Slash commands synced globally")
+            guild_synced = await self.tree.sync(guild=guild)
+            logger.info(f"Also synced to guild {config.guild_id} ({len(guild_synced)} commands)")
 
     async def close(self) -> None:
         await close_db()
