@@ -4,7 +4,8 @@ COGS = [
     "cogs.availability",
     "cogs.calendar_cog",
     "cogs.pracc",
-    "cogs.mapstats",      # Nouveau
-    "cogs.mood",          # Nouveau
+    "cogs.mapstats",
+    "cogs.mood",
+    "cogs.panels",        # Panels interactifs
     "cogs.stats",
 ]

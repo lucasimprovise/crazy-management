@@ -270,4 +270,10 @@ class TeamChannels(Base):
 
     created_at          = Column(DateTime,   default=datetime.utcnow)
 
+    # Panel message IDs (persistent interactive embeds)
+    panel_roster_msg    = Column(BigInteger, nullable=True)   # Message ID du panel #roster
+    panel_calendar_msg  = Column(BigInteger, nullable=True)   # Message ID du panel #calendrier
+    panel_praccs_msg    = Column(BigInteger, nullable=True)   # Message ID du panel #praccs
+    panel_mood_msg      = Column(BigInteger, nullable=True)   # Message ID du panel #mood
+
     team: "Team" = relationship("Team")

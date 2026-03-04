@@ -16,6 +16,7 @@ from database import get_session, Team, Player, TeamRole
 from utils import success, error, warning, roster_embed
 from utils.i18n import t
 from utils.channels import get_team_channels, auto_assign_role, auto_remove_role
+from utils.poster import post_roster_update
 from utils.team_resolver import resolve_team
 
 logger = logging.getLogger(__name__)
@@ -103,6 +104,13 @@ class RosterCog(commands.Cog, name="Roster"):
                 if tc:
                     await auto_assign_role(interaction.guild, member, tc, is_staff=False)
 
+            # Visual feedback in #roster
+            if interaction.guild:
+                await post_roster_update(
+                    interaction.guild, session, team,
+                    "added", ign, role.value if role else None, interaction.user,
+                )
+
             await interaction.followup.send(
                 embed=success(
                     t("roster.add_success_title", interaction),
@@ -142,10 +150,25 @@ class RosterCog(commands.Cog, name="Roster"):
                 )
                 return
 
+            saved_ign = player.ign
             await session.delete(player)
             await session.commit()
+
+            # Remove Discord roles
+            if isinstance(member, discord.Member):
+                tc = await get_team_channels(session, team.id)
+                if tc:
+                    await auto_remove_role(interaction.guild, member, tc)
+
+            # Visual feedback in #roster
+            if interaction.guild:
+                await post_roster_update(
+                    interaction.guild, session, team,
+                    "removed", saved_ign, None, interaction.user,
+                )
+
             await interaction.followup.send(
-                embed=success(t("roster.remove_success_title", interaction), f"**{player.ign}** retiré de **{team.name}**."),
+                embed=success(t("roster.remove_success_title", interaction), f"**{saved_ign}** retiré de **{team.name}**."),
                 ephemeral=True,
             )
 

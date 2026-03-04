@@ -21,6 +21,7 @@ from discord.ext import commands
 from sqlalchemy import select, and_, extract
 
 from database import get_session, Team, TeamRole, Event, EventType, MatchResult
+from utils.poster import post_event_added
 from utils.cog_helpers import get_team_for_command
 from utils import success, error, warning, event_embed, calendar_embed
 from utils.i18n import t
@@ -130,6 +131,10 @@ class CalendarCog(commands.Cog, name="Calendrier"):
             session.add(event)
             await session.commit()
             await session.refresh(event)
+
+            # Visual feedback in #calendar
+            if interaction.guild:
+                await post_event_added(interaction.guild, session, team, event, interaction.user)
 
             await interaction.followup.send(
                 embed=event_embed(event),

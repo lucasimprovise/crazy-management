@@ -30,6 +30,7 @@ from database import (
     get_session, Team, Player, TeamMember, TeamRole,
     MoodRating, TeamMood,
 )
+from utils.poster import post_mood_overview
 from utils.cog_helpers import get_team_for_command
 from utils.team_resolver import get_member_role
 from utils.i18n import t
@@ -158,6 +159,10 @@ class MoodCog(commands.Cog, name="Mood"):
                     week_start = week,
                 ))
             await session.commit()
+
+            # Visual feedback in #mood-overview (staff only channel)
+            if interaction.guild:
+                await post_mood_overview(interaction.guild, session, team, week)
 
             ratings = tdict("mood.ratings", interaction)
             rating_label = ratings.get(rating.value, rating.value)

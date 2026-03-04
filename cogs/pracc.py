@@ -22,6 +22,7 @@ from sqlalchemy import select
 
 from config import config
 from database import get_session, Team, TeamRole, Player, Event, PlayerPerformance, EventType, MatchResult
+from utils.poster import post_pracc_result
 from utils.cog_helpers import get_team_for_command
 from utils import success, error, warning, pracc_summary_embed, performance_embed
 from utils.i18n import t
@@ -138,6 +139,10 @@ class PraccCog(commands.Cog, name="Praccs"):
             session.add(event)
             await session.commit()
             await session.refresh(event)
+
+            # Visual feedback in #praccs
+            if interaction.guild:
+                await post_pracc_result(interaction.guild, session, team, event, interaction.user)
 
             score_str = ""
             if rounds_won is not None and rounds_lost is not None:
