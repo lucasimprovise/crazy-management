@@ -78,10 +78,13 @@ class TeamManagerBot(commands.Bot):
 
         # If GUILD_ID is set, also sync instantly to that guild (dev mode)
         if config.guild_id:
-            guild = discord.Object(id=config.guild_id)
-            self.tree.copy_global_to(guild=guild)
-            guild_synced = await self.tree.sync(guild=guild)
-            logger.info(f"Also synced to guild {config.guild_id} ({len(guild_synced)} commands)")
+            try:
+                guild = discord.Object(id=config.guild_id)
+                self.tree.copy_global_to(guild=guild)
+                guild_synced = await self.tree.sync(guild=guild)
+                logger.info(f"Also synced to guild {config.guild_id} ({len(guild_synced)} commands)")
+            except discord.Forbidden:
+                logger.warning(f"Cannot sync to guild {config.guild_id} — bot not in that server or missing access. Skipping guild sync.")
 
     async def close(self) -> None:
         await close_db()
