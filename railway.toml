@@ -1,0 +1,10 @@
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 5
+
+# Railway injects DATABASE_URL automatically from the linked PostgreSQL service.
+# The only variable you need to set manually in Railway's dashboard is DISCORD_TOKEN.

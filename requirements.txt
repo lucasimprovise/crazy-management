@@ -1,0 +1,16 @@
+# Esports Team Manager Bot — Dependencies
+
+# Discord
+discord.py>=2.3.2
+
+# Database — PostgreSQL (production) + SQLite (local dev)
+sqlalchemy>=2.0.0
+asyncpg>=0.29.0       # PostgreSQL async driver (Railway)
+aiosqlite>=0.19.0     # SQLite driver (local dev only)
+
+# HTTP / Scraping
+aiohttp>=3.9.0
+beautifulsoup4>=4.12.0
+
+# Config
+python-dotenv>=1.0.0
