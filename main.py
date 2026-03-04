@@ -52,7 +52,10 @@ class TeamManagerBot(commands.Bot):
     async def setup_hook(self) -> None:
         # Only create local data dir for SQLite (not needed on Railway)
         if not config.is_postgres:
-            os.makedirs("data", exist_ok=True)
+            try:
+                os.makedirs("data", exist_ok=True)
+            except PermissionError:
+                pass  # Running in Docker as non-root — SQLite not available anyway
 
         await init_db(config.database_url)
         logger.info(f"Starting {config.bot_name}...")

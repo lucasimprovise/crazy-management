@@ -24,6 +24,9 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 # Copy source
 COPY --chown=botuser:botuser . .
 
+# Create data dir with correct ownership (for local SQLite dev)
+RUN mkdir -p data && chown botuser:botuser data
+
 # Switch to non-root
 USER botuser
 
